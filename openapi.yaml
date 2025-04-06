@@ -1,0 +1,705 @@
+openapi: 3.0.0
+info:
+  title: Automation API
+  version: 1.0.0
+  description: API for managing members, channels, posts, tasks and analytics
+
+servers:
+  - url: /api/v1
+    description: Default server
+
+components:
+  schemas:
+    Member:
+      type: object
+      required:
+        - gmail
+        - pwd
+      properties:
+        _id:
+          type: string
+          format: objectId
+        gmail:
+          type: string
+          format: email
+        pwd:
+          type: string
+          minLength: 6
+        recoveryMail:
+          type: string
+          format: email
+        recoveryMailVerified:
+          type: boolean
+          default: false
+        gmailCreationDate:
+          type: string
+          format: date-time
+        youtubeChannelId:
+          type: string
+          format: objectId
+        systemProfiles:
+          type: array
+          items:
+            type: object
+            properties:
+              systemName:
+                type: string
+              profileNumber:
+                type: string
+        tasks:
+          type: array
+          items:
+            type: string
+            format: objectId
+
+    Channel:
+      type: object
+      required:
+        - ownerId
+        - channelName
+        - category
+        - type
+      properties:
+        _id:
+          type: string
+          format: objectId
+        ownerId:
+          type: string
+          format: objectId
+        channelName:
+          type: string
+        category:
+          type: string
+          enum: [cricket, song, movie, failCompilation, model, cartoon, devotional, serial, meme, knowledge, diy, gaming, education, fitness, technology, cooking, travel, lifestyle, news, comedy]
+        type:
+          type: string
+          enum: [aiGenerated, copyrightEdited, directCopied]
+        metadata:
+          type: object
+          properties:
+            creationDate:
+              type: string
+              format: date-time
+            dpImageLink:
+              type: string
+            bannerImageLink:
+              type: string
+            keywords:
+              type: array
+              items:
+                type: string
+            handle:
+              type: string
+            description:
+              type: string
+            socialMediaLinks:
+              type: array
+              items:
+                type: object
+                properties:
+                  platform:
+                    type: string
+                  url:
+                    type: string
+            videoWaterMark:
+              type: string
+        posts:
+          type: array
+          items:
+            type: string
+            format: objectId
+        engagementStats:
+          type: object
+          properties:
+            automated:
+              $ref: '#/components/schemas/EngagementStats'
+            organic:
+              $ref: '#/components/schemas/EngagementStats'
+
+    Post:
+      type: object
+      required:
+        - channelId
+        - url
+        - type
+      properties:
+        _id:
+          type: string
+          format: objectId
+        channelId:
+          type: string
+          format: objectId
+        url:
+          type: string
+          format: uri
+        type:
+          type: string
+          enum: [photo, shorts, video, article]
+        description:
+          type: string
+        engagement:
+          type: object
+          properties:
+            automated:
+              $ref: '#/components/schemas/TaskEngagement'
+            organic:
+              $ref: '#/components/schemas/EngagementStats'
+        uploadDate:
+          type: string
+          format: date-time
+        lastScrapedDate:
+          type: string
+          format: date-time
+        tasksPerformed:
+          type: array
+          items:
+            type: string
+            format: objectId
+        lastTaskPerformedDate:
+          type: string
+          format: date-time
+
+    Task:
+      type: object
+      required:
+        - assignedTo
+        - targetPost
+        - type
+      properties:
+        _id:
+          type: string
+          format: objectId
+        assignedTo:
+          type: string
+          format: objectId
+        targetPost:
+          type: string
+          format: objectId
+        type:
+          type: string
+          enum: [like, comment, share, view]
+        status:
+          type: string
+          enum: [pending, completed, failed]
+          default: pending
+        completedAt:
+          type: string
+          format: date-time
+        failureReason:
+          type: string
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 5
+          default: 1
+        attempts:
+          type: integer
+          default: 0
+        maxAttempts:
+          type: integer
+          default: 3
+
+    EngagementStats:
+      type: object
+      properties:
+        likes:
+          type: integer
+          default: 0
+        comments:
+          type: integer
+          default: 0
+        shares:
+          type: integer
+          default: 0
+        views:
+          type: integer
+          default: 0
+        subscribers:
+          type: integer
+          default: 0
+
+    TaskEngagement:
+      type: object
+      properties:
+        likes:
+          type: array
+          items:
+            type: string
+            format: objectId
+        comments:
+          type: array
+          items:
+            type: string
+            format: objectId
+        shares:
+          type: array
+          items:
+            type: string
+            format: objectId
+        views:
+          type: array
+          items:
+            type: string
+            format: objectId
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: error
+              message:
+                type: string
+
+paths:
+  /members:
+    get:
+      summary: Get all members
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: sort
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of members
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Member'
+    post:
+      summary: Create a new member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Member'
+      responses:
+        '201':
+          description: Member created successfully
+
+  /members/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get member by ID
+      responses:
+        '200':
+          description: Member details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Update member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Member'
+      responses:
+        '200':
+          description: Member updated successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete member
+      responses:
+        '204':
+          description: Member deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /members/{id}/tasks:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get member's tasks
+      responses:
+        '200':
+          description: List of member's tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+  /members/{id}/channel:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get member's channel
+      responses:
+        '200':
+          description: Member's channel details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+
+  /channels:
+    get:
+      summary: Get all channels
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: type
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of channels
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Channel'
+    post:
+      summary: Create a new channel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+      responses:
+        '201':
+          description: Channel created successfully
+
+  /channels/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get channel by ID
+      responses:
+        '200':
+          description: Channel details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Channel'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Update channel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Channel'
+      responses:
+        '200':
+          description: Channel updated successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete channel
+      responses:
+        '204':
+          description: Channel deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /channels/{id}/posts:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get channel's posts
+      responses:
+        '200':
+          description: List of channel's posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+  /channels/{id}/stats:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get channel's engagement stats
+      parameters:
+        - in: query
+          name: timeframe
+          schema:
+            type: integer
+            description: Timeframe in days
+            default: 30
+      responses:
+        '200':
+          description: Channel's engagement statistics
+
+  /posts:
+    get:
+      summary: Get all posts
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: type
+          schema:
+            type: string
+        - in: query
+          name: channelId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+    post:
+      summary: Create a new post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '201':
+          description: Post created successfully
+
+  /posts/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get post by ID
+      responses:
+        '200':
+          description: Post details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Update post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: Post updated successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete post
+      responses:
+        '204':
+          description: Post deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /posts/{id}/tasks:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get post's tasks
+      responses:
+        '200':
+          description: List of post's tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+  /posts/unengaged:
+    get:
+      summary: Get unengaged posts
+      parameters:
+        - in: query
+          name: days
+          schema:
+            type: integer
+            default: 7
+      responses:
+        '200':
+          description: List of unengaged posts
+
+  /posts/analytics/engagement:
+    get:
+      summary: Get post engagement analytics
+      responses:
+        '200':
+          description: Post engagement analytics
+
+  /posts/{id}/engagement:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    patch:
+      summary: Update post engagement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [like, comment, share, view]
+                isAutomated:
+                  type: boolean
+      responses:
+        '200':
+          description: Post engagement updated successfully
+
+  /analytics/member/{id}/performance:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get member performance analytics
+      responses:
+        '200':
+          description: Member performance analytics
+
+  /analytics/channel/{id}/growth:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get channel growth analytics
+      parameters:
+        - in: query
+          name: timeframe
+          schema:
+            type: integer
+            default: 30
+      responses:
+        '200':
+          description: Channel growth analytics
+
+  /analytics/posts/engagement:
+    get:
+      summary: Get posts engagement analytics
+      responses:
+        '200':
+          description: Posts engagement analytics
+
+  /analytics/tasks/distribution:
+    get:
+      summary: Get tasks distribution analytics
+      parameters:
+        - in: query
+          name: timeframe
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tasks distribution analytics
