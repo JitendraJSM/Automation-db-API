@@ -1,0 +1,148 @@
+First please analyse the given below Project Startup Documentation the answer my Questions one by one ok.
+--- Project Startup / Initial Documentation ---
+
+Title: Web Automation app 
+Project type: Team management app for admin only 
+Aim: Grow Youtube channels of all team members
+Idea description: As youtube channel needs posts and views, likes, comments and shares on those posts. So i gathered a team of 10 members having one youtube channel for each and i am as admin have responsibilities
+	1. Keep up to date data of all members. 
+	2. To assign tasks for example task number 113 is for member number 3 to like or to watch or to comment on a post of a video of youtube channel of member number 5. 
+	3. Keep track of tasks and verify the completion the tasks.
+	4. Analytics:
+		- Track engagement growth over time (e.g., views, watchtime, likes, shares, comments).
+		- Compare organic vs. assigned engagement.
+Data Requirements:
+
+	1. Member Data
+		1.1 gmail
+		1.2 pwd
+		1.3 recoveryMail
+		1.4 recoveryMailVerified
+		1.5 gmailCreationDate
+		1.6 youtubeChannel - Object reference
+		1.7 tasks - [array of object references]
+
+	2. Channel data may be as given below
+		2.0 admin / owner - Object reference of member 
+		2.1 channelName
+		2.2 metadata
+			2.2.1 creationDate
+			2.2.2 dpImageLink
+			2.2.3 bannerImageLink
+			2.2.4 keywords
+			2.2.5 handle
+			2.2.6 description
+			2.2.7 addSocialMediaLinks
+			2.2.8 videoWaterMark
+		2.3 photoPosts - [array of object references of posts]
+		2.4 articlePosts - [array of object references of posts]
+		2.5 videoPosts - [array of object references of posts]
+		2.6 shortsPosts - [array of object references of posts]
+		2.7 allPosts - [Combined array of all of 3.4, 3.5, 3.6 & 3.7 object references of posts]
+		2.8 likes
+			2.8.1 totalPhotoPostsLikes
+				2.8.1.1 automatedLikes - [array of object references of tasks]
+				2.8.1.2 organicLikes - type number
+			2.8.2 articlePostsLikes
+				2.8.2.1 automatedLikes - [array of object references of tasks]
+				2.8.2.2 organicLikes - type number
+			2.8.3 videoPostsLikes
+				2.8.3.1 automatedLikes - [array of object references of tasks]
+				2.8.3.2 organicLikes - type number
+			2.8.4 allPostsLikes
+				2.8.4.1 automatedLikes - [array of object references of tasks]
+				2.8.4.2 organicLikes - type number
+		2.9 shares
+			2.9.1 totalPhotoPostsShares
+				2.9.1.1 automatedShares - [array of object references of tasks][array of object references of tasks]
+				2.9.1.2 organicShares - type number
+			2.9.2 articlePostsShares
+				2.9.2.1 automatedShares - [array of object references of tasks]
+				2.9.2.2 organicShares - type number
+			2.9.3 videoPostsShares
+				2.9.3.1 automatedShares - [array of object references of tasks]
+				2.9.3.2 organicShares - type number
+			2.9.4 allPostsShares
+				2.9.4.1 automatedShares - [array of object references of tasks]
+				2.9.4.2 organicShares - type number
+		2.10 comments
+			2.10.1 totalPhotoPostsComments
+				2.10.1.1 automatedComments - [array of object references of tasks]
+				2.10.1.2 organicComments - type number
+			2.10.2 articlePostsComments
+				2.10.2.1 automatedComments - [array of object references of tasks]
+				2.10.2.2 organicComments - type number
+			2.10.3 videoPostsComments
+				2.10.3.1 automatedComments - [array of object references of tasks]
+				2.10.3.2 organicComments - type number
+			2.10.4 allPostsComments
+				2.10.4.1 automatedComments - [array of object references of tasks]
+				2.10.4.2 organicComments - type number
+		2.11 subscribes
+			2.11.1 automatedSubscribedBy - [array of object references of tasks]
+			2.11.2 totalAutomatedSubscribers - type number
+			2.11.2 totalOrganicSubscribers - type number
+		2.12 resources - [array of object references]
+        2.13 lastPostingDate
+
+    3. Post:
+        3.1 URL
+        3.2 type: [ "photo" / "Shorts" / "Video" / "Article" ]
+        3.3 description
+        3.4 likes - 
+            3.4.1 automatedlikes - [array of object references of tasks]
+            3.4.2 organic likes - number of likes
+        3.5 comments - 
+            3.5.1 automatedcomments - [array of object references of tasks]
+            3.5.2 organic comments - number of comments
+        3.6 shares - 
+            3.6.1 automatedshares - [array of object references of tasks]
+            3.6.2 organic shares - number of shares
+        3.7 views - 
+            3.7.1 automatedviews - [array of object references of tasks]
+            3.7.2 organic views - number of views
+        3.8 shares - 
+            3.8.1 automatedshares - [array of object references of tasks]
+            3.8.2 organic shares - number of shares
+        3.9 automatedActions - [array of object references of tasks]
+        3.10 resource - object reference of resource's post
+        3.11 uploadDate
+        3.12 lastScrapedDate
+        3.13 tasksPerformed - [array of object references of tasks]
+        3.14 lastTaskPerformedDate
+        3.15 postOwner / channelOfPost - object reference of youtubeChannel
+        
+
+
+Limitations / Important points while assigning tasks are as: 
+	1. Automated Selection of a member whom to assign a task as if a single member perform many likes or comments than that member will gets flagged or banned so selecting members in a way so that each member will get tasks and not get banned or flagged.
+	2. Automated Selection of task type (like task or comment task or view task or share task) which task to give the member as a member cannot perform same flow again and again (if he do then he will get flagged or banned.)
+	3. Automated Selection of post which post needs the automated action (i.e. comment or like or comment or share), this selection depends upon mainly 2 points 
+		i.  Each posts gets equal actions
+		ii. if a post is getting more attentions / engagements / growth then that post must get or actions.
+    
+
+General Examples of Operations on data:
+    1. CRUD Operations on each data feild.
+    2. In future may be i set different permission on CRUD opertions for example set some feild do not allow updation.
+    3. How many number of likes or comments or shares or all 3 actions done by member 3 to member 5
+    4. Total number of likes done by member 1 to all other members.
+    5. Total number of automated actions done on member 6.
+    6. Post number 1253 is commented by which members ?
+    7. list of posts which are not taken under tasks / action under last 7 days
+
+Tech Stack;
+    Frontend - HTML,CSS,JS
+    Backend - Node JS
+    Database - MongoDB
+
+Questions: - 
+Q.1 - What else data feilds should i include or what data feilds shoule i remove for example in youdtube data there are four fields for different posts as given below:
+		2.3 photoPosts - [array of object references]
+		2.4 articlePosts - [array of object references]
+		2.5 videoPosts - [array of object references]
+		2.6 shortsPosts - [array of object references]
+        so why to have 4 different fields on document instead in one field "2.7 allPosts - [Combined array of all of 3.4, 3.5, 3.6 & 3.7 object references]" there are all posts and each post document itself have the type?
+
+Q.2 - I think that there are so many properties on each type for example "2.13 lastPostingDate" that property could be a virtual property which could be gind from "2.7 allPosts - [Combined array of all of 3.4, 3.5, 3.6 & 3.7 object references of posts]". Am i right, or this is better to store this as property?
+
