@@ -1,30 +1,13 @@
 const Task = require('../models/taskModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require("./handlerFactory");
 
-exports.getAllTasks = catchAsync(async (req, res, next) => {
-  const result = await Task.findAllWithFilters(req.query);
-
-  res.status(200).json({
-    status: 'success',
-    data: result
-  });
-});
-
-exports.getTask = catchAsync(async (req, res, next) => {
-  const task = await Task.findById(req.params.id)
-    .populate('assignedTo')
-    .populate('targetPost');
-
-  if (!task) {
-    return next(new AppError('No task found with that ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: task
-  });
-});
+exports.getAllTasks = factory.getAll(Task);
+exports.getTask = factory.getOne(Task, [
+  { path: 'assignedTo', select: '-__v' },
+  { path: 'targetPost', select: '-__v' } 
+]);
 
 exports.createTask = catchAsync(async (req, res, next) => {
   const task = await Task.create(req.body);

@@ -12,7 +12,7 @@ const taskSchema = new mongoose.Schema({
     ref: 'Post',
     required: [true, 'Task must be associated with a post']
   },
-  type: {
+  taskType: {
     type: String,
     required: [true, 'Task must have a type'],
     enum: {
@@ -51,10 +51,10 @@ const taskSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Indexes for faster queries
-taskSchema.index({ assignedTo: 1, status: 1 });
-taskSchema.index({ targetPost: 1 });
-taskSchema.index({ status: 1, priority: -1 });
+//Note:- Will make queries after analysising the data accessing patterns indexes for faster queries
+// taskSchema.index({ assignedTo: 1, status: 1 });
+// taskSchema.index({ targetPost: 1 });
+// taskSchema.index({ status: 1, priority: -1 });
 
 // Pre-save middleware for status updates
 taskSchema.pre('save', function(next) {

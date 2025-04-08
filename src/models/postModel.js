@@ -24,14 +24,8 @@ const postSchema = new mongoose.Schema({
   url: {
     type: String,
     required: [true, 'Post must have a URL'],
-    validate: {
-      validator: function(v) {
-        return /^(https?:\/\/)?[\w\-]+(\.[\w\-]+)+[\/\?]?.*$/.test(v);
-      },
-      message: 'Please provide a valid URL'
-    }
   },
-  type: {
+  postType: {
     type: String,
     required: [true, 'Post must have a type'],
     enum: {
@@ -60,10 +54,10 @@ const postSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Indexes for faster queries
-postSchema.index({ channelId: 1, uploadDate: -1 });
-postSchema.index({ type: 1 });
-postSchema.index({ lastScrapedDate: 1 });
+//Note:- Will make queries after analysising the data accessing patterns indexes for faster queries
+// postSchema.index({ channelId: 1, uploadDate: -1 });
+// postSchema.index({ type: 1 });
+// postSchema.index({ lastScrapedDate: 1 });
 
 // Virtual for total engagement
 postSchema.virtual('totalEngagement').get(function() {

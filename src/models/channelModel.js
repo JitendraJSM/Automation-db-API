@@ -36,7 +36,7 @@ const channelSchema = new mongoose.Schema({
       'lifestyle', 'news', 'comedy'
     ]
   },
-  type: {
+  channelContentType: {
     type: String,
     required: true,
     enum: ['aiGenerated', 'copyrightEdited', 'directCopied']
@@ -51,10 +51,11 @@ const channelSchema = new mongoose.Schema({
     socialMediaLinks: [socialMediaLinkSchema],
     videoWaterMark: String
   },
-  posts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post'
-  }],
+   // NOTE: As posts can be indefinitely many it is suggested to have parent reference and use virtual populate
+  // posts: [{
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'Post'
+  // }],
   engagementStats: {
     automated: engagementStatsSchema,
     organic: engagementStatsSchema
@@ -67,15 +68,14 @@ const channelSchema = new mongoose.Schema({
 
 // Indexes for faster queries
 channelSchema.index({ channelName: 1 });
-channelSchema.index({ category: 1 });
-channelSchema.index({ type: 1 });
-channelSchema.index({ 'metadata.keywords': 1 });
 
-// Virtual populate posts
-channelSchema.virtual('postCount').get(function() {
-  return this.posts.length;
-});
+// Note:- When the posts are contected using parent referencing how we could count 
+// // Virtual populate posts
+// channelSchema.virtual('postCount').get(function() {
+//   return this.posts.length;
+// });
 
+// Note- Check in which format ownerId is populated
 // Pre-find hook to populate owner details
 channelSchema.pre(/^find/, function(next) {
   this.populate({
@@ -85,70 +85,13 @@ channelSchema.pre(/^find/, function(next) {
   next();
 });
 
-// Static method to find channels with filters and pagination
-channelSchema.statics.findAllWithFilters = async function(queryParams) {
-  const page = parseInt(queryParams.page) || 1;
-  const limit = parseInt(queryParams.limit) || 10;
-  const skip = (page - 1) * limit;
-
-  const query = {};
-  if (queryParams.category) query.category = queryParams.category;
-  if (queryParams.type) query.type = queryParams.type;
-  if (queryParams.keyword) query['metadata.keywords'] = queryParams.keyword;
-
-  const [channels, total] = await Promise.all([
-    this.find(query)
-      .sort(queryParams.sort || '-createdAt')
-      .skip(skip)
-      .limit(limit),
-    this.countDocuments(query)
-  ]);
-
-  return {
-    channels,
-    pagination: {
-      page,
-      limit,
-      total,
-      pages: Math.ceil(total / limit)
-    }
-  };
-};
-
+// Note:- As Posts are contected using parent referencing how this is going to populated and in which format
 // Static method to find channel by ID with details
 channelSchema.statics.findByIdWithDetails = function(id) {
   return this.findById(id).populate('posts');
 };
 
-// Static method to create new channel with validation
-channelSchema.statics.createNew = async function(channelData) {
-  const existingChannel = await this.findOne({ channelName: channelData.channelName });
-  if (existingChannel) {
-    throw new AppError('Channel name already exists', 409);
-  }
-  return this.create(channelData);
-};
-
-// Static method to update channel with validation
-channelSchema.statics.findByIdAndUpdateWithValidation = function(id, updateData) {
-  return this.findByIdAndUpdate(
-    id,
-    updateData,
-    { new: true, runValidators: true }
-  );
-};
-
-// Static method to delete channel and cleanup related data
-channelSchema.statics.findByIdAndDeleteWithCleanup = async function(id) {
-  const channel = await this.findById(id);
-  if (!channel) return null;
-
-  // Remove associated posts
-  await mongoose.model('Post').deleteMany({ _id: { $in: channel.posts } });
-  
-  return channel.remove();
-};
-
+// Note:- Check the given below code
 // Static method to find channel's posts with filtering
 channelSchema.statics.findPostsByChannelId = async function(id, queryParams) {
   const channel = await this.findById(id).populate({

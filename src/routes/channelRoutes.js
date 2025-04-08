@@ -1,5 +1,6 @@
+const channelController = require('../controllers/channelController.js');
+
 const express = require('express');
-const channelController = require('../controllers/channelController');
 const router = express.Router();
 
 router

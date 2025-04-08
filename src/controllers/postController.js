@@ -1,84 +1,16 @@
 const Post = require('../models/postModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require("./handlerFactory");
 
-exports.getAllPosts = catchAsync(async (req, res, next) => {
-  const result = await Post.findAllWithFilters(req.query);
-
-  res.status(200).json({
-    status: 'success',
-    data: result
-  });
-});
-
-exports.getPost = catchAsync(async (req, res, next) => {
-  const post = await Post.findById(req.params.id)
-    .populate('channelId')
-    .populate('tasksPerformed');
-
-  if (!post) {
-    return next(new AppError('No post found with that ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: post
-  });
-});
-
-exports.createPost = catchAsync(async (req, res, next) => {
-  const post = await Post.create(req.body);
-
-  // Update channel's posts array
-  await post.populate('channelId');
-  await post.channelId.updateOne({ $push: { posts: post._id } });
-
-  res.status(201).json({
-    status: 'success',
-    data: post
-  });
-});
-
-exports.updatePost = catchAsync(async (req, res, next) => {
-  const post = await Post.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true, runValidators: true }
-  ).populate('channelId');
-
-  if (!post) {
-    return next(new AppError('No post found with that ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: post
-  });
-});
-
-exports.deletePost = catchAsync(async (req, res, next) => {
-  const post = await Post.findById(req.params.id);
-
-  if (!post) {
-    return next(new AppError('No post found with that ID', 404));
-  }
-
-  // Remove post reference from channel
-  await post.channelId.updateOne({ $pull: { posts: post._id } });
-  
-  // Delete associated tasks
-  await Promise.all([
-    post.remove(),
-    ...post.tasksPerformed.map(taskId =>
-      mongoose.model('Task').findByIdAndDelete(taskId)
-    )
-  ]);
-
-  res.status(204).json({
-    status: 'success',
-    data: null
-  });
-});
+exports.getAllPosts = factory.getAll(Post);
+exports.getPost = factory.getOne(Post, [
+  { path: 'channelId', select: '-__v' },
+  { path: 'tasksPerformed', select: '-__v' }
+]);
+exports.createPost = factory.createOne(Post);
+exports.updatePost = factory.updateOne(Post);
+exports.deletePost = factory.deleteOne(Post);
 
 exports.getPostTasks = catchAsync(async (req, res, next) => {
   const post = await Post.findById(req.params.id).populate('tasksPerformed');
