@@ -16,10 +16,15 @@ const organicEngagementSchema = new mongoose.Schema({
 });
 
 const postSchema = new mongoose.Schema({
-  channelId: {
+  youtubeChannel: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Channel',
     required: [true, 'Post must belong to a channel']
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Member',
+    required: [true, 'Post must belong to a member']
   },
   url: {
     type: String,
@@ -43,10 +48,6 @@ const postSchema = new mongoose.Schema({
     default: Date.now
   },
   lastScrapedDate: Date,
-  tasksPerformed: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Task'
-  }],
   lastTaskPerformedDate: Date
 }, {
   timestamps: true,
@@ -54,6 +55,7 @@ const postSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
+/*
 //Note:- Will make queries after analysising the data accessing patterns indexes for faster queries
 // postSchema.index({ channelId: 1, uploadDate: -1 });
 // postSchema.index({ type: 1 });
@@ -181,7 +183,7 @@ postSchema.methods.updateEngagementCounts = async function(type, isAutomated = f
     { new: true, runValidators: true }
   );
 };
+*/
 
 const Post = mongoose.model('Post', postSchema);
-
 module.exports = Post;

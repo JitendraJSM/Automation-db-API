@@ -1,20 +1,20 @@
-const Member = require('../models/memberModel');
-const Channel = require('../models/channelModel');
-const Post = require('../models/postModel');
-const Task = require('../models/taskModel');
-const AppError = require('../utils/appError');
-const catchAsync = require('../utils/catchAsync');
+const Member = require("../models/memberModel.js");
+const Channel = require("../models/channelModel.js");
+const Post = require("../models/postModel.js");
+const Task = require("../models/taskModel.js");
+const AppError = require("../utils/appError.js");
+const catchAsync = require("../utils/catchAsync.js");
 
 exports.getMemberPerformance = catchAsync(async (req, res, next) => {
   const tasks = await Task.getMemberPerformanceAnalytics(req.params.id);
 
   if (!tasks.length) {
-    return next(new AppError('No tasks found for this member', 404));
+    return next(new AppError("No tasks found for this member", 404));
   }
 
   res.status(200).json({
-    status: 'success',
-    data: tasks
+    status: "success",
+    data: tasks,
   });
 });
 
@@ -23,12 +23,12 @@ exports.getChannelGrowth = catchAsync(async (req, res, next) => {
   const stats = await Channel.getEngagementStats(req.params.id, timeframe);
 
   if (!stats) {
-    return next(new AppError('No channel found with that ID', 404));
+    return next(new AppError("No channel found with that ID", 404));
   }
 
   res.status(200).json({
-    status: 'success',
-    data: stats
+    status: "success",
+    data: stats,
   });
 });
 
@@ -36,12 +36,12 @@ exports.getPostsEngagement = catchAsync(async (req, res, next) => {
   const analytics = await Post.getEngagementAnalytics(req.query);
 
   if (!analytics) {
-    return next(new AppError('No posts found for the given criteria', 404));
+    return next(new AppError("No posts found for the given criteria", 404));
   }
 
   res.status(200).json({
-    status: 'success',
-    data: analytics
+    status: "success",
+    data: analytics,
   });
 });
 
@@ -49,11 +49,11 @@ exports.getTasksDistribution = catchAsync(async (req, res, next) => {
   const distribution = await Task.getTaskDistribution(req.query.timeframe);
 
   if (!distribution) {
-    return next(new AppError('No tasks found for the given timeframe', 404));
+    return next(new AppError("No tasks found for the given timeframe", 404));
   }
 
   res.status(200).json({
-    status: 'success',
-    data: distribution
+    status: "success",
+    data: distribution,
   });
 });

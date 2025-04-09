@@ -1,17 +1,15 @@
 const Member = require("../models/memberModel.js");
 const AppError = require("../utils/appError.js");
 const catchAsync = require("../utils/catchAsync.js");
-const factory = require("./handlerFactory");
+const factory = require("./handlerFactory.js");
 
 exports.getAllMembers = factory.getAll(Member);
-exports.getMember = factory.getOne(Member, [
-  { path: "tasks", select: "-__v" },
-  { path: "youtubeChannelId", select: "-__v" },
-]);
+exports.getMember = factory.getOne(Member);
 exports.createMember = factory.createOne(Member);
 exports.updateMember = factory.updateOne(Member);
 exports.deleteMember = factory.deleteOne(Member);
 
+/*
 exports.getMemberTasks = catchAsync(async (req, res, next) => {
   const tasks = await Member.findTasksByMemberId(req.params.id, req.query);
 
@@ -37,3 +35,4 @@ exports.getMemberChannel = catchAsync(async (req, res, next) => {
     data: channel,
   });
 });
+*/

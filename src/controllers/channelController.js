@@ -1,7 +1,7 @@
-const Channel = require('../models/channelModel');
-const AppError = require('../utils/appError');
-const catchAsync = require('../utils/catchAsync');
-const factory = require("./handlerFactory");
+const Channel = require("../models/channelModel.js");
+const AppError = require("../utils/appError.js");
+const catchAsync = require("../utils/catchAsync.js");
+const factory = require("./handlerFactory.js");
 
 exports.getAllChannels = factory.getAll(Channel);
 exports.getChannel = factory.getOne(Channel);
@@ -9,6 +9,7 @@ exports.createChannel = factory.createOne(Channel);
 exports.updateChannel = factory.updateOne(Channel);
 exports.deleteChannel = factory.deleteOne(Channel);
 
+/*
 exports.getChannelPosts = catchAsync(async (req, res, next) => {
   const posts = await Channel.findPostsByChannelId(req.params.id, req.query);
 
@@ -34,3 +35,4 @@ exports.getChannelStats = catchAsync(async (req, res, next) => {
     data: stats
   });
 });
+*/

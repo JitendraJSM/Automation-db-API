@@ -1,20 +1,22 @@
-const channelController = require('../controllers/channelController.js');
+const channelController = require("../controllers/channelController.js");
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
 router
-  .route('/')
+  .route("/")
   .get(channelController.getAllChannels)
   .post(channelController.createChannel);
 
 router
-  .route('/:id')
+  .route("/:id")
   .get(channelController.getChannel)
   .put(channelController.updateChannel)
   .delete(channelController.deleteChannel);
 
+/*
 router.get('/:id/posts', channelController.getChannelPosts);
 router.get('/:id/stats', channelController.getChannelStats);
+*/
 
 module.exports = router;

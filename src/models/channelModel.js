@@ -15,7 +15,7 @@ const engagementStatsSchema = new mongoose.Schema({
 });
 
 const channelSchema = new mongoose.Schema({
-  ownerId: {
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Member',
     required: true
@@ -51,11 +51,6 @@ const channelSchema = new mongoose.Schema({
     socialMediaLinks: [socialMediaLinkSchema],
     videoWaterMark: String
   },
-   // NOTE: As posts can be indefinitely many it is suggested to have parent reference and use virtual populate
-  // posts: [{
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'Post'
-  // }],
   engagementStats: {
     automated: engagementStatsSchema,
     organic: engagementStatsSchema
@@ -66,6 +61,7 @@ const channelSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
+/*
 // Indexes for faster queries
 channelSchema.index({ channelName: 1 });
 
@@ -78,10 +74,10 @@ channelSchema.index({ channelName: 1 });
 // Note- Check in which format ownerId is populated
 // Pre-find hook to populate owner details
 channelSchema.pre(/^find/, function(next) {
-  this.populate({
-    path: 'ownerId',
-    select: 'gmail systemProfiles'
-  });
+  // this.populate({
+  //   path: 'ownerId',
+  //   select: 'gmail systemProfiles'
+  // });
   next();
 });
 
@@ -157,7 +153,7 @@ channelSchema.methods.hasRecentActivity = async function(days = 7) {
   });
   return recentPosts > 0;
 };
+*/
 
 const Channel = mongoose.model('Channel', channelSchema);
-
 module.exports = Channel;

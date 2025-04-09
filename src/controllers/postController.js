@@ -1,17 +1,15 @@
-const Post = require('../models/postModel');
-const AppError = require('../utils/appError');
-const catchAsync = require('../utils/catchAsync');
-const factory = require("./handlerFactory");
+const Post = require("../models/postModel.js");
+const AppError = require("../utils/appError.js");
+const catchAsync = require("../utils/catchAsync.js");
+const factory = require("./handlerFactory.js");
 
 exports.getAllPosts = factory.getAll(Post);
-exports.getPost = factory.getOne(Post, [
-  { path: 'channelId', select: '-__v' },
-  { path: 'tasksPerformed', select: '-__v' }
-]);
+exports.getPost = factory.getOne(Post);
 exports.createPost = factory.createOne(Post);
 exports.updatePost = factory.updateOne(Post);
 exports.deletePost = factory.deleteOne(Post);
 
+/*
 exports.getPostTasks = catchAsync(async (req, res, next) => {
   const post = await Post.findById(req.params.id).populate('tasksPerformed');
 
@@ -58,3 +56,4 @@ exports.updatePostEngagement = catchAsync(async (req, res, next) => {
     data: updatedPost
   });
 });
+*/

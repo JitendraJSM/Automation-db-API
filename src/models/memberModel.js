@@ -30,33 +30,33 @@ const memberSchema = new mongoose.Schema(
       default: false,
     },
     gmailCreationDate: Date,
-    youtubeChannelId: {
+    youtubeChannel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Channel",
+      required: true,
+      unique: true,
     },
     systemProfiles: [systemProfileSchema],
-    // NOTE: As tasks can be indefinitely many it is suggested to have parent reference and use virtual populate
-    // tasks: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Task",
-    //   },
-    // ],
   },
   {
     timestamps: true,
   }
 );
 
+/*
+
 // Indexes for faster queries
 // NOTE:- Which one of given below is better check course and ask deepseek ai
 memberSchema.index({ gmail: 1 });
-memberSchema.index({ youtubeChannelId: 1 });
+// memberSchema.index({ youtubeChannelId: 1 });
 // memberSchema.index({ gmail: 1, youtubeChannelId: 1 });
 
 // Pre-save middleware for data validation
-memberSchema.pre("save", function (next) {
+memberSchema.pre("save", async function (next) {
   //Put your pre save functionality here if any
+//   this.youtubeChannel = await mongoose
+//     .model("Channel")
+//     .findById(this.youtubeChannel );
   next();
 });
 
@@ -94,16 +94,15 @@ memberSchema.statics.findByIdAndDeleteWithCleanup = async function (id) {
   return member.remove();
 };
 
-// Static method to find member's tasks
+// Remove this below static method as tasks collections is parent referenced
 memberSchema.statics.findTasksByMemberId = async function (id, queryParams) {
-  const member = await this.findById(id).populate({
-    path: "tasks",
-    match: queryParams.status ? { status: queryParams.status } : {},
-    options: { sort: queryParams.sort || "-createdAt" },
-  });
-
-  return member ? member.tasks : null;
-};
+   const member = await this.findById(id).populate({
+     path: "tasks",
+     match: queryParams.status ? { status: queryParams.status } : {},
+     options: { sort: queryParams.sort || "-createdAt" },
+   });
+   return member ? member.tasks : null;
+ };
 
 // Static method to find member's channel
 memberSchema.statics.findChannelByMemberId = async function (id) {
@@ -119,7 +118,7 @@ memberSchema.methods.hasActiveTasks = async function () {
   });
   return taskCount > 0;
 };
+*/
 
 const Member = mongoose.model("Member", memberSchema);
-
 module.exports = Member;

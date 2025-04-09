@@ -1,0 +1,59 @@
+<mxfile host="app.diagrams.net" modified="2024-01-09T12:00:00.000Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram name="Page-1" id="youtube-channel-management">
+    <mxGraphModel dx="1092" dy="645" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Member Entity -->
+        <mxCell id="2" value="MEMBER" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=1;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="gmail (string, unique) PK&#10;pwd (string)&#10;recoveryMail (string)&#10;recoveryMailVerified (boolean)&#10;gmailCreationDate (date)&#10;youtubeChannel (ObjectId) FK&#10;systemProfiles [&#10;    {&#10;        systemName (string)&#10;        profileNumber (string)&#10;    }&#10;]" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="2">
+          <mxGeometry y="30" width="200" height="190" as="geometry"/>
+        </mxCell>
+        
+        <!-- Channel Entity -->
+        <mxCell id="4" value="CHANNEL" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=1;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="40" width="240" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="_id (ObjectId) PK&#10;ownerId (ObjectId) FK&#10;channelName (string, unique)&#10;category (enum)&#10;channelContentType (enum)&#10;metadata {&#10;    creationDate (date)&#10;    dpImageLink (string)&#10;    bannerImageLink (string)&#10;    keywords [string]&#10;    handle (string)&#10;    description (string)&#10;    socialMediaLinks [&#10;        {&#10;            platform (string)&#10;            url (string)&#10;        }&#10;    ]&#10;    videoWaterMark (string)&#10;}" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="4">
+          <mxGeometry y="30" width="240" height="250" as="geometry"/>
+        </mxCell>
+        
+        <!-- Post Entity -->
+        <mxCell id="6" value="POST" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=1;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="360" width="240" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="_id (ObjectId) PK&#10;channelId (ObjectId) FK&#10;url (string)&#10;postType (enum)&#10;description (string)&#10;engagement {&#10;    automated: {likes,comments,shares,views}&#10;    organic: {likes,comments,shares,views}&#10;}&#10;uploadDate (date)&#10;lastScrapedDate (date)&#10;tasksPerformed [ObjectId] FK&#10;lastTaskPerformedDate (date)" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="6">
+          <mxGeometry y="30" width="240" height="170" as="geometry"/>
+        </mxCell>
+        
+        <!-- Task Entity -->
+        <mxCell id="8" value="TASK" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=1;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="200" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="_id (ObjectId) PK&#10;assignedTo (ObjectId) FK&#10;targetPost (ObjectId) FK&#10;taskType (enum)&#10;status (enum)&#10;completedAt (date)&#10;failureReason (string)&#10;priority (number)&#10;attempts (number)&#10;maxAttempts (number)" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;" vertex="1" parent="8">
+          <mxGeometry y="30" width="200" height="170" as="geometry"/>
+        </mxCell>
+        
+        <!-- Relationships with improved spacing -->
+        <mxCell id="10" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmandOne;startArrow=ERmandOne;exitX=1;exitY=0.25;entryX=0;entryY=0.25;" edge="1" parent="1" source="3" target="5">
+          <mxGeometry width="100" height="100" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="11" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="5" target="7">
+          <mxGeometry width="100" height="100" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="12" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="3" target="9">
+          <mxGeometry width="100" height="100" relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="13" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="7" target="9">
+          <mxGeometry width="100" height="100" relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
