@@ -9,6 +9,32 @@ exports.deleteOne = (Model) =>
     if (!doc) {
       return next(new AppError("No document found with that ID", 404));
     }
+    if (process.env.NODE_ENV === "development")
+      return res.status(200).json({
+        status: "success",
+        message: "This is not safe here",
+        data: doc,
+      });
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  });
+
+exports.deleteAll = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.deleteMany({});
+
+    if (!doc) {
+      return next(new AppError("Failed to delete documents", 404));
+    }
+
+    if (process.env.NODE_ENV === "development")
+      return res.status(200).json({
+        status: "success",
+        message: `Successfully deleted ${doc.deletedCount} documents`,
+        data: doc,
+      });
 
     res.status(204).json({
       status: "success",
@@ -38,6 +64,7 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
+    console.log(doc); // Add this line to log the created document t
 
     res.status(201).json({
       status: "success",

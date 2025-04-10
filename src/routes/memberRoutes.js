@@ -6,7 +6,8 @@ const router = express.Router();
 router
   .route("/")
   .get(memberController.getAllMembers)
-  .post(memberController.createMember);
+  .post(memberController.createMember)
+  .delete(memberController.deleteAllMembers);
 
 router
   .route("/:id")

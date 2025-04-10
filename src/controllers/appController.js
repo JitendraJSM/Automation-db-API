@@ -1,8 +1,6 @@
 const express = require("express");
 
-const app = express();
-
-// Start express app
+// Start express appWithMiddlewares
 const appWithMiddlewares = express();
 
 const path = require("path");
@@ -16,23 +14,24 @@ const hpp = require("hpp");
 const cookieParser = require("cookie-parser");
 
 // 1) Built-in Middlewares
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+appWithMiddlewares.use(express.json());
+appWithMiddlewares.use(express.static(path.join(__dirname, "public")));
 
 // 2) Development Middlewares
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+  appWithMiddlewares.use(morgan("dev"));
+  console.log(`Yes process.env.NODE_ENV: ${process.env.NODE_ENV}`);
 }
 
 // 3) Security Middlewares
-app.use(cookieParser());
-app.enable("trust proxy");
-app.use(cors());
-app.use(helmet());
-app.use(mongoSanitize());
-app.use(xss());
+appWithMiddlewares.use(cookieParser());
+appWithMiddlewares.enable("trust proxy");
+appWithMiddlewares.use(cors());
+appWithMiddlewares.use(helmet());
+appWithMiddlewares.use(mongoSanitize());
+appWithMiddlewares.use(xss());
 // Prevent parameter pollution
-app.use(
+appWithMiddlewares.use(
   hpp({
     whitelist: [
       "status",
@@ -46,14 +45,15 @@ app.use(
   })
 );
 // Body parser, reading data from body into req.body
-app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+appWithMiddlewares.use(express.json({ limit: "10kb" }));
+appWithMiddlewares.use(express.urlencoded({ extended: true, limit: "10kb" }));
 // Limit requests from same API
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
   message: "Too many requests from this IP, please try again in an hour!",
 });
-if (process.env.NODE_ENV !== "development") app.use("/api", limiter);
+if (process.env.NODE_ENV !== "development")
+  appWithMiddlewares.use("/api", limiter);
 
 module.exports = appWithMiddlewares;

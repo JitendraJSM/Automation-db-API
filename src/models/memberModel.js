@@ -18,7 +18,13 @@ const memberSchema = new mongoose.Schema(
     pwd: {
       type: String,
       required: true,
-      // Create a Setter that makes all characters as * excpt first and last
+      set: (value) =>
+        !value
+          ? value
+          : value
+              .split("")
+              .map((c, i) => (i > 0 && i < value.length - 1 ? "*" : c))
+              .join(""),
     },
     recoveryMail: {
       type: String,
@@ -33,8 +39,8 @@ const memberSchema = new mongoose.Schema(
     youtubeChannel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Channel",
-      required: true,
-      unique: true,
+      // required: true,
+      // unique: true,
     },
     systemProfiles: [systemProfileSchema],
   },

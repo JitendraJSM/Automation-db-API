@@ -5,6 +5,7 @@ const factory = require("./handlerFactory.js");
 
 exports.getAllMembers = factory.getAll(Member);
 exports.getMember = factory.getOne(Member);
+exports.deleteAllMembers = factory.deleteAll(Member);
 exports.createMember = factory.createOne(Member);
 exports.updateMember = factory.updateOne(Member);
 exports.deleteMember = factory.deleteOne(Member);
