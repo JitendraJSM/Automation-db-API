@@ -15,6 +15,8 @@ router
   .patch(memberController.updateMember)
   .delete(memberController.deleteMember);
 
+router.patch("/:id/systemProfile", memberController.addSystemProfile);
+
 /*
 router.get("/:id/tasks", memberController.getMemberTasks); // GET /api/members/:id/tasks - Get member's tasks
 router.get("/:id/channel", memberController.getMemberChannel); // GET /api/members/:id/channel - Get member's channel

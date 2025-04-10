@@ -53,7 +53,7 @@ exports.updateOne = (Model) =>
       return next(new AppError("No document found with that ID", 404));
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       status: "success",
       data: {
         data: doc,
