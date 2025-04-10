@@ -11,8 +11,8 @@ router
 router
   .route("/:id")
   .get(memberController.getMember)
-  .patchget(memberController.updateMember)
-  .deleteget(memberController.deleteMember);
+  .patch(memberController.updateMember)
+  .delete(memberController.deleteMember);
 
 /*
 router.get("/:id/tasks", memberController.getMemberTasks); // GET /api/members/:id/tasks - Get member's tasks

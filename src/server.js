@@ -1,16 +1,16 @@
-const dotenv = require("dotenv");
-const connectDB = require("./dbConnection.js");
+const dotenv = require("dotenv").config({ path: "./config.env" });
 
 process.on("uncaughtException", (err) => {
   console.log("UNCAUGHT EXCEPTION! 💥 Shutting down...");
+  console.log(err);
   console.log(err.name, err.message);
   process.exit(1);
 });
 
-dotenv.config({ path: "./config.env" });
-
 const app = require("./app");
+const connectDB = require("./dbConnection.js");
 
+// Connect to MongoDB
 connectDB();
 
 const port = process.env.PORT || 3000;
