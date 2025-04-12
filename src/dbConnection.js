@@ -7,8 +7,6 @@ const mongodbUri = process.env.LOCAL_DB_URI || "mongodb://localhost:27017/mydata
 console.log(`mongodbUri is : ${mongodbUri}`);
 // Connection options
 const options = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds
   socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
   family: 4, // Use IPv4, skip trying IPv6
