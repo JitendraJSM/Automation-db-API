@@ -6,12 +6,29 @@ class APIFeatures {
 
   filter() {
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach(el => delete queryObj[el]);
+    const excludedFields = ["page", "sort", "limit", "fields"];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    // Handle nested array queries for systemProfiles
+    if (queryObj.systemName) {
+      const systemNameValue = queryObj.systemName;
+      if (systemNameValue.startsWith("-")) {
+        // Handle negative query (find members that don't have the specified systemName)
+        queryObj["systemProfiles"] = {
+          $not: { $elemMatch: { systemName: systemNameValue.substring(1) } },
+        };
+      } else {
+        // Handle positive query (existing behavior)
+        queryObj["systemProfiles"] = {
+          $elemMatch: { systemName: systemNameValue },
+        };
+      }
+      delete queryObj.systemName;
+    }
 
     // 1B) Advanced filtering
     let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
     this.query = this.query.find(JSON.parse(queryStr));
 
@@ -20,10 +37,10 @@ class APIFeatures {
 
   sort() {
     if (this.queryString.sort) {
-      const sortBy = this.queryString.sort.split(',').join(' ');
+      const sortBy = this.queryString.sort.split(",").join(" ");
       this.query = this.query.sort(sortBy);
     } else {
-      this.query = this.query.sort('-createdAt');
+      this.query = this.query.sort("-createdAt");
     }
 
     return this;
@@ -31,10 +48,12 @@ class APIFeatures {
 
   limitFields() {
     if (this.queryString.fields) {
-      const fields = this.queryString.fields.split(',').join(' ');
+      const fields = this.queryString.fields.split(",").join(" ");
       this.query = this.query.select(fields);
     } else {
-      this.query = this.query.select('-__v');
+      this.query = this.query.select(
+        "-__v -createdAt -updatedAt -pwd -recoveryMail"
+      );
     }
 
     return this;

@@ -47,6 +47,7 @@ exports.addSystemProfile = catchAsync(async (req, res, next) => {
     data: member,
   });
 });
+
 /*
 exports.getMemberTasks = catchAsync(async (req, res, next) => {
   const tasks = await Member.findTasksByMemberId(req.params.id, req.query);

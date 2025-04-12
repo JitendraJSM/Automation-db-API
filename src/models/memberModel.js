@@ -49,6 +49,12 @@ const memberSchema = new mongoose.Schema(
   }
 );
 
+// Pre-find hook to exclude password by default
+memberSchema.pre(/^find/, function (next) {
+  this.select("-__v -createdAt -updatedAt -pwd -recoveryMail");
+  next();
+});
+
 /*
 
 // Indexes for faster queries
