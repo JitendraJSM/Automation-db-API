@@ -1,3 +1,4 @@
+// Changed the name of APIFeatures.js to apiFeatures.js"
 class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
