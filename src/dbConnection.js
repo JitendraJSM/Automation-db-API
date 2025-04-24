@@ -2,7 +2,14 @@ require("dotenv").config({ path: "./config.env" });
 const mongoose = require("mongoose");
 
 const nodeEnv = process.env.NODE_ENV || "development";
-const mongodbUri = process.env.LOCAL_DB_URI || "mongodb://localhost:27017/mydatabase";
+// const mongodbUri = process.env.LOCAL_DB_URI || "mongodb://localhost:27017/mydatabase";
+const mongodbUri =
+  process.env.DB_TYPE === "LOCAL"
+    ? process.env.LOCAL_DB_URI
+    : process.env.MONGO_DB_URI.replace(
+        "<db_password>",
+        process.env.MONGO_DB_URI_PASSWORD
+      );
 
 console.log(`mongodbUri is : ${mongodbUri}`);
 // Connection options
