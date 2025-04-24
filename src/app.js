@@ -22,7 +22,12 @@ const AppError = require("./utils/appError.js");
 const globalErrorHandler = require("./controllers/errorController.js");
 
 // 4) API Server Check
-app.use("/", (req, res) => res.send("Hello! Your API Server is running...."));
+app.use("/", (req, res) =>
+  res.status(200).json({
+    status: "success",
+    message: "Automation-db-API is running",
+  })
+);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

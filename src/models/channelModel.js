@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const AppError = require('../utils/appError');
+const mongoose = require("mongoose");
+const AppError = require("../utils/appError");
 
 const socialMediaLinkSchema = new mongoose.Schema({
   platform: String,
-  url: String
+  url: String,
 });
 
 const engagementStatsSchema = new mongoose.Schema({
@@ -11,55 +11,75 @@ const engagementStatsSchema = new mongoose.Schema({
   comments: { type: Number, default: 0 },
   shares: { type: Number, default: 0 },
   views: { type: Number, default: 0 },
-  subscribers: { type: Number, default: 0 }
+  subscribers: { type: Number, default: 0 },
 });
 
-const channelSchema = new mongoose.Schema({
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Member',
-    required: true
+const channelSchema = new mongoose.Schema(
+  {
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Member",
+      required: true,
+    },
+    channelName: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    category: {
+      type: String,
+      required: true,
+      enum: [
+        "cricket",
+        "song",
+        "movie",
+        "failCompilation",
+        "model",
+        "cartoon",
+        "devotional",
+        "serial",
+        "meme",
+        "knowledge",
+        "diy",
+        "gaming",
+        "education",
+        "fitness",
+        "technology",
+        "cooking",
+        "travel",
+        "lifestyle",
+        "news",
+        "comedy",
+        "none",
+      ],
+    },
+    channelContentType: {
+      type: String,
+      required: true,
+      enum: ["aiGenerated", "copyrightEdited", "directCopied", "none"],
+    },
+    metadata: {
+      creationDate: Date,
+      dpImageLink: String,
+      bannerImageLink: String,
+      keywords: [String],
+      handle: String,
+      description: String,
+      socialMediaLinks: [socialMediaLinkSchema],
+      videoWaterMark: String,
+    },
+    engagementStats: {
+      automated: engagementStatsSchema,
+      organic: engagementStatsSchema,
+    },
   },
-  channelName: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true
-  },
-  category: {
-    type: String,
-    required: true,
-    enum: [
-      'cricket', 'song', 'movie', 'failCompilation', 'model', 'cartoon',
-      'devotional', 'serial', 'meme', 'knowledge', 'diy', 'gaming',
-      'education', 'fitness', 'technology', 'cooking', 'travel',
-      'lifestyle', 'news', 'comedy'
-    ]
-  },
-  channelContentType: {
-    type: String,
-    required: true,
-    enum: ['aiGenerated', 'copyrightEdited', 'directCopied']
-  },
-  metadata: {
-    creationDate: Date,
-    dpImageLink: String,
-    bannerImageLink: String,
-    keywords: [String],
-    handle: String,
-    description: String,
-    socialMediaLinks: [socialMediaLinkSchema],
-    videoWaterMark: String
-  },
-  engagementStats: {
-    automated: engagementStatsSchema,
-    organic: engagementStatsSchema
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
-}, {
-  timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true }
-});
+);
 
 /*
 // Indexes for faster queries
@@ -155,5 +175,5 @@ channelSchema.methods.hasRecentActivity = async function(days = 7) {
 };
 */
 
-const Channel = mongoose.model('Channel', channelSchema);
+const Channel = mongoose.model("Channel", channelSchema);
 module.exports = Channel;
