@@ -96,20 +96,14 @@ exports.getOne = (Model, popOptions) =>
 
     res.status(200).json({
       status: "success",
-      data: {
-        data: doc,
-      },
+      data: doc,
     });
   });
 
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     // BUILD QUERY
-    const features = new APIFeatures(Model.find(), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
+    const features = new APIFeatures(Model.find(), req.query).filter().sort().limitFields().paginate();
     // const doc = await features.query.explain();
 
     const doc = await features.query;
