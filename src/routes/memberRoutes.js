@@ -3,19 +3,13 @@ const memberController = require("../controllers/memberController.js");
 const express = require("express");
 const router = express.Router();
 
-router
-  .route("/")
-  .get(memberController.getAllMembers)
-  .post(memberController.createMember)
-  .delete(memberController.deleteAllMembers);
+router.route("/").get(memberController.getAllMembers).post(memberController.createMember).delete(memberController.deleteAllMembers);
 
-router
-  .route("/:id")
-  .get(memberController.getMember)
-  .patch(memberController.updateMember)
-  .delete(memberController.deleteMember);
+router.route("/:id").get(memberController.getMember).patch(memberController.updateMember).delete(memberController.deleteMember);
 
-router.patch("/:id/systemProfile", memberController.addSystemProfile);
+router.post("/:id/systemProfile", memberController.addSystemProfile);
+router.patch("/:id/systemProfile", memberController.updateSystemProfile);
+router.delete("/:id/systemProfile", memberController.deleteSystemProfile);
 
 /*
 router.get("/:id/tasks", memberController.getMemberTasks); // GET /api/members/:id/tasks - Get member's tasks
